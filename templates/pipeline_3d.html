@@ -1,0 +1,10 @@
+<!-- templates/graphs/pipeline_3d.html -->
+{% extends 'base.html' %}
+
+{% block title %}Gráfico generado{% endblock %}
+
+{% block content %}
+    <h3 class="mt-4 mb-4">Gráfico generado mediante coordenadas X,Y,Z</h3>
+    <div id="grafico">{{ grafico|safe }}</div>
+    <a href="{% url 'ingresar_coordenadas' %}" class="btn btn-primary mt-4">Ingresar Nuevas Coordenadas</a>
+{% endblock %}
