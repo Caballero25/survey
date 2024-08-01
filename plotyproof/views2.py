@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import plotly.graph_objects as go
 from plotly.offline import plot
+import plotly.io as pio
 
 def trajectory_chart(request):
     demostrativo = True  # Cambia a False si no quieres los datos de demostración
@@ -63,3 +64,36 @@ def trajectory_chart(request):
         plot_div_2d = plot(fig_2d, output_type='div')
         , 'plot_div_2d': plot_div_2d
 """
+
+def trajectory_chart2D(request):
+    demostrativo = True
+    if request.method == 'POST':
+        x = request.POST.getlist('x[]')
+        y = request.POST.getlist('y[]')
+
+        # Convertir los datos a flotantes
+        x = [float(i) for i in x]
+        y = [float(i) for i in y]
+
+        fig_2d = go.Figure()
+        fig_2d.add_trace(go.Scatter(
+            x=x, y=y,
+            mode='lines+markers',
+            marker=dict(size=5),
+            line=dict(color='red', width=2),
+            name='MD vs V. sec.'
+        ))
+
+        # Configurar el diseño del gráfico 2D
+        fig_2d.update_layout(
+            title='Gráfico 2D de la trayectoria del pozo',
+            xaxis_title='Profundidad. (ft)',
+            yaxis_title='IS (ft)',
+            dragmode='pan'
+        )
+        plot_div_2d = plot(fig_2d, output_type='div')
+        return JsonResponse({'plot_div_3d': plot_div_2d}) 
+    # En caso de GET request, renderiza la plantilla con un gráfico vacío
+    fig_3d = go.Figure()
+    plot_div_3d = plot(fig_3d, output_type='div')
+    return render(request, 'trajectory_chart2D.html', context={'plot_div_3d': plot_div_3d, 'demostrativo': demostrativo})
